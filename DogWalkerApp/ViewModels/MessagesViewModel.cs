@@ -22,6 +22,7 @@ public partial class MessagesViewModel : BaseViewModel
     public ObservableCollection<MessageDto> Messages { get; } = new();
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendCommand))]
     private string _draftMessage = string.Empty;
 
     public MessagesViewModel(IDogWalkerApi api, IRealTimeMessagingService messaging, IAppSettingsProvider settings)
@@ -51,7 +52,7 @@ public partial class MessagesViewModel : BaseViewModel
         await _messaging.JoinBookingAsync(Guid.Empty);
     });
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSend))]
     private Task SendAsync() => SafeExecuteAsync(async () =>
     {
         if (string.IsNullOrWhiteSpace(DraftMessage))
@@ -70,4 +71,6 @@ public partial class MessagesViewModel : BaseViewModel
         Messages.Add(sent);
         DraftMessage = string.Empty;
     });
+
+    private bool CanSend() => !string.IsNullOrWhiteSpace(DraftMessage) && !IsBusy;
 }

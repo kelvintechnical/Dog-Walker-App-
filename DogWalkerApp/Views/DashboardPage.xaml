@@ -4,12 +4,13 @@
              x:Class="DogWalkerApp.Views.DashboardPage"
              Title="Dashboard">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="20">
-            <Label Text="Friends with Fur"
-                   FontSize="28"
-                   FontAttributes="Bold"
-                   TextColor="{DynamicResource Primary}" />
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="16" Padding="20">
+                <Label Text="Friends with Fur"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="{DynamicResource Primary}" />
 
             <Frame BackgroundColor="{AppThemeBinding Light=#f1f5f9, Dark=#1f2937}"
                    Padding="16"
@@ -95,6 +96,13 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           Color="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center" />
+    </Grid>
 </ContentPage>

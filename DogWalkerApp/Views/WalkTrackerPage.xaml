@@ -3,26 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DogWalkerApp.Views.WalkTrackerPage"
              Title="Live Walk">
-    <VerticalStackLayout Padding="16" Spacing="12">
-        <Label Text="Walk Tracking" FontSize="24" FontAttributes="Bold" />
-        <Label Text="{Binding ActiveBookingId, StringFormat='Booking: {0}'}"
-               FontSize="13"
-               TextColor="{DynamicResource Secondary}" />
-        <HorizontalStackLayout Spacing="10">
-            <Button Text="Start Walk" Command="{Binding BeginWalkCommand}" />
-            <Button Text="End Walk" Command="{Binding EndWalkCommand}" />
-            <Button Text="Capture Photo" Command="{Binding CapturePhotoCommand}" />
-        </HorizontalStackLayout>
-        <CollectionView ItemsSource="{Binding Route}" SelectionMode="None">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:WalkRoutePoint" xmlns:models="clr-namespace:DogWalker.Core.Models;assembly=DogWalker.Core">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Label Text="{Binding RecordedAtUtc, StringFormat='{}{0:T}'}" />
-                        <Label Grid.Column="1"
-                               Text="{Binding Latitude, StringFormat='{0:F4}'}" />
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </VerticalStackLayout>
+    <Grid>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="Walk Tracking" FontSize="24" FontAttributes="Bold" />
+            <Label Text="{Binding ActiveBookingId, StringFormat='Booking: {0}'}"
+                   FontSize="13"
+                   TextColor="{DynamicResource Secondary}" />
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Start Walk" Command="{Binding BeginWalkCommand}" />
+                <Button Text="End Walk" Command="{Binding EndWalkCommand}" />
+                <Button Text="Capture Photo" Command="{Binding CapturePhotoCommand}" />
+            </HorizontalStackLayout>
+            <CollectionView ItemsSource="{Binding Route}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:WalkRoutePoint" xmlns:models="clr-namespace:DogWalker.Core.Models;assembly=DogWalker.Core">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding RecordedAtUtc, StringFormat='{}{0:T}'}" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Latitude, StringFormat='{0:F4}'}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           Color="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center" />
+    </Grid>
 </ContentPage>

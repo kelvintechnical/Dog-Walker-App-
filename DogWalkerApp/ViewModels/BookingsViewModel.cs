@@ -29,6 +29,7 @@ public partial class BookingsViewModel : BaseViewModel
     private string _notes = string.Empty;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CreateBookingCommand))]
     private DogDto? _selectedDog;
 
     public BookingsViewModel(IDogWalkerApi api)
@@ -55,7 +56,7 @@ public partial class BookingsViewModel : BaseViewModel
         }
     });
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanCreateBooking))]
     private Task CreateBookingAsync() => SafeExecuteAsync(async () =>
     {
         if (_selectedDog is null)
@@ -77,4 +78,6 @@ public partial class BookingsViewModel : BaseViewModel
         History.Insert(0, booking);
         Notes = string.Empty;
     });
+
+    private bool CanCreateBooking() => SelectedDog is not null && !IsBusy;
 }

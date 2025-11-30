@@ -19,6 +19,10 @@
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
+            <Picker Title="Select Dog"
+                    ItemsSource="{Binding Dogs}"
+                    SelectedItem="{Binding SelectedDog}"
+                    ItemDisplayBinding="{Binding Name}" />
             <Editor Placeholder="Notes for this booking" HeightRequest="80" Text="{Binding Notes}" />
             <Button Text="Create Booking" Command="{Binding CreateBookingCommand}" />
         </VerticalStackLayout>
@@ -40,5 +44,11 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           Color="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center" />
     </Grid>
 </ContentPage>

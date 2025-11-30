@@ -25,5 +25,11 @@
                     Text="Send"
                     Command="{Binding SendCommand}" />
         </Grid>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           Color="{DynamicResource Primary}"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center" />
     </Grid>
 </ContentPage>

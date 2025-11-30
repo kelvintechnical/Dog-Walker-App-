@@ -127,6 +127,87 @@ Deploy to your target platform via Visual Studio, `dotnet`, or `maui` CLI toolin
 - DTOs + request records shared between API and MAUI client.
 - Configuration objects (`AppEnvironmentOptions`) for consistent environment metadata.
 
+## Recent UX Improvements
+
+### Completed (Phase 1)
+
+#### Loading Indicators
+- **Added ActivityIndicator to all pages** (DashboardPage, BookingsPage, ClientsPage, WalkTrackerPage, MessagesPage)
+- Bound to `IsBusy` property from BaseViewModel
+- Users now see visual feedback during API calls and async operations
+- Indicators display centered overlay with primary theme color
+
+#### Error Handling & User Feedback
+- **Enhanced BaseViewModel** with comprehensive error handling
+  - Added `ErrorMessage` observable property to track errors
+  - Updated `SafeExecuteAsync` with try-catch-finally block
+  - Errors now display user-friendly alerts via `DisplayAlert`
+  - Added `ShowErrorAlertAsync` and `ShowSuccessAlertAsync` helper methods
+- Users no longer experience silent failures - all exceptions surface with clear messages
+
+#### Dog Selection UI
+- **Added Dog Picker to BookingsPage** (BookingsPage.xaml:22-25)
+  - Binds to `Dogs` collection and `SelectedDog` property
+  - Displays dog names via `ItemDisplayBinding`
+  - Enables users to select which dog to book instead of using hardcoded placeholder
+  - Positioned between Service picker and Notes field for logical flow
+
+#### Command Validation
+- **Added CanExecute predicates to critical commands**
+  - `CreateBookingCommand` (BookingsViewModel.cs:81): Disabled when `SelectedDog` is null or `IsBusy` is true
+  - `SendCommand` (MessagesViewModel.cs:74): Disabled when `DraftMessage` is empty or `IsBusy` is true
+  - Added `[NotifyCanExecuteChangedFor]` attributes to trigger re-evaluation when properties change
+  - Buttons now visually disable when actions aren't valid, preventing user confusion
+
+### Remaining UX Enhancements (Phase 2)
+
+#### High Priority
+1. **Replace Hardcoded Test Data**
+   - BookingsViewModel.LoadDataAsync (line 45-47) uses placeholder "Goldie" dog
+   - Need to fetch real dogs from API: `await _api.GetDogsForClientAsync(...)`
+   - Update ClientsViewModel to load real clients from API
+   - Populate realistic demo data via seed migrations
+
+2. **Empty State Messages**
+   - Add "No bookings yet" label to BookingsPage History CollectionView
+   - Add "No clients found" to ClientsPage when FilteredClients is empty
+   - Add "No messages" to MessagesPage when Messages collection is empty
+   - Add "No route data" to WalkTrackerPage when Route is empty
+   - Use visibility converters: `IsVisible="{Binding Collection.Count, Converter={StaticResource IsZeroConverter}}"`
+
+3. **Service Error Handling**
+   - GpsTrackerService.TrackAsync (line 41-65): Wrap in try-catch, handle location permission failures
+   - RealTimeMessagingService.ConnectAsync (line 19-37): Add exception handling, show connection errors
+   - MediaCaptureService: Add validation for file size/format, handle permission denials
+   - Add retry logic for network failures in API calls
+
+#### Medium Priority
+4. **Validation Feedback UI**
+   - Add error label below Dog picker on BookingsPage when SelectedDog is null
+   - Show validation messages for required fields before submission
+   - Add field-level validation with red borders/labels for invalid inputs
+
+5. **Toast/Snackbar Notifications**
+   - Currently only StatusMessage on Dashboard shows feedback
+   - Integrate CommunityToolkit.Maui Snackbar for success/error notifications
+   - Show "Booking created successfully" after CreateBookingAsync
+   - Show "Message sent" after SendAsync
+   - Display network connectivity warnings
+
+6. **Empty Collection Converters**
+   - Create `CollectionToVisibilityConverter` to show/hide empty states
+   - Create `IsNullOrEmptyConverter` for validation feedback
+   - Add to Resources/Styles/Converters.xaml
+
+### UI/UX Polish (Phase 3)
+- Replace placeholder app icons and splash screens
+- Add skeleton loaders instead of blank screens during initial load
+- Implement pull-to-refresh on CollectionViews
+- Add swipe actions to collection items (delete, edit)
+- Improve accessibility labels and screen reader support
+- Add haptic feedback for button presses
+- Theme refinements (shadows, spacing, animation)
+
 ## Testing & Verification
 
 - **API** – Run `dotnet test` once unit tests are added; manual verification via Swagger UI (`/swagger`) and standard REST clients (Insomnia/Postman).
