@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogWalkerApp", "DogWalkerApp\DogWalkerApp.csproj", "{07B8A16E-25C0-4018-BC4D-E39F80CE87B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogWalkerApi", "DogWalkerApi\DogWalkerApi.csproj", "{07DC2E54-9588-4635-9C9F-B084A4302E40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogWalker.Core", "DogWalker.Core\DogWalker.Core.csproj", "{89D28264-520F-4557-8A36-3D9F46D13353}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07B8A16E-25C0-4018-BC4D-E39F80CE87B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B8A16E-25C0-4018-BC4D-E39F80CE87B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B8A16E-25C0-4018-BC4D-E39F80CE87B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B8A16E-25C0-4018-BC4D-E39F80CE87B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07DC2E54-9588-4635-9C9F-B084A4302E40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07DC2E54-9588-4635-9C9F-B084A4302E40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07DC2E54-9588-4635-9C9F-B084A4302E40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07DC2E54-9588-4635-9C9F-B084A4302E40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89D28264-520F-4557-8A36-3D9F46D13353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89D28264-520F-4557-8A36-3D9F46D13353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89D28264-520F-4557-8A36-3D9F46D13353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89D28264-520F-4557-8A36-3D9F46D13353}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
