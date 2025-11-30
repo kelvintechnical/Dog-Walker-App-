@@ -3,12 +3,25 @@
     x:Class="DogWalkerApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:DogWalkerApp"
+    xmlns:views="clr-namespace:DogWalkerApp.Views"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <Tab Title="Dashboard" Icon="appiconfg.svg">
+            <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" />
+        </Tab>
+        <Tab Title="Bookings" Icon="dotnet_bot.svg">
+            <ShellContent ContentTemplate="{DataTemplate views:BookingsPage}" />
+        </Tab>
+        <Tab Title="Clients">
+            <ShellContent ContentTemplate="{DataTemplate views:ClientsPage}" />
+        </Tab>
+        <Tab Title="Live Walk">
+            <ShellContent ContentTemplate="{DataTemplate views:WalkTrackerPage}" />
+        </Tab>
+        <Tab Title="Messages">
+            <ShellContent ContentTemplate="{DataTemplate views:MessagesPage}" />
+        </Tab>
+    </TabBar>
 
 </Shell>

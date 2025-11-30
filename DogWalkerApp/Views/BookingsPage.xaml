@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DogWalkerApp.Views.BookingsPage"
+             Title="Bookings">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+        <VerticalStackLayout Spacing="12">
+            <Label Text="Schedule a Service" FontSize="22" FontAttributes="Bold" />
+            <DatePicker Date="{Binding SelectedDate}" />
+            <TimePicker Time="{Binding SelectedTime}" />
+            <Picker Title="Service" SelectedItem="{Binding SelectedService}">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type enums:ServiceType}" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:enums="clr-namespace:DogWalker.Core.Enums;assembly=DogWalker.Core">
+                        <enums:ServiceType>ThirtyMinuteWalk</enums:ServiceType>
+                        <enums:ServiceType>OneHourWalk</enums:ServiceType>
+                        <enums:ServiceType>DogSitting</enums:ServiceType>
+                        <enums:ServiceType>PuppyVisit</enums:ServiceType>
+                        <enums:ServiceType>Boarding</enums:ServiceType>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+            <Editor Placeholder="Notes for this booking" HeightRequest="80" Text="{Binding Notes}" />
+            <Button Text="Create Booking" Command="{Binding CreateBookingCommand}" />
+        </VerticalStackLayout>
+
+        <Label Grid.Row="1" Text="History" FontSize="18" FontAttributes="Bold" Margin="0,16,0,8" />
+
+        <CollectionView Grid.Row="1" Margin="0,40,0,0"
+                        ItemsSource="{Binding History}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dto:BookingDto" xmlns:dto="clr-namespace:DogWalker.Core.DTOs;assembly=DogWalker.Core">
+                    <Frame Padding="12" Margin="0,6" CornerRadius="10" BorderColor="#e2e8f0">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding ServiceType}" FontAttributes="Bold" />
+                            <Label Text="{Binding StartTimeUtc, StringFormat='{}{0:MMM dd h:mm tt}'}" FontSize="13" TextColor="{DynamicResource Secondary}" />
+                            <Label Text="{Binding Status}" FontSize="13" TextColor="#10b981" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

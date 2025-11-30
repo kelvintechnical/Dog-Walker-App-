@@ -28,5 +28,13 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Friends with Fur captures walk photos and videos for client updates.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We store media from walks to share progress with pet parents.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Live GPS tracking keeps clients informed while you walk their dogs.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Background location lets us continue sharing route info during walks.</string>
 </dict>
 </plist>

@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>DogWalkerApp</ApplicationTitle>
+		<ApplicationTitle>Friends with Fur</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.dogwalkerapp</ApplicationId>
+		<ApplicationId>com.friendswithfur.walker</ApplicationId>
 		<ApplicationIdGuid>404f6f1d-1a4e-4121-a4e5-9b56ef047dc8</ApplicationIdGuid>
 
 		<!-- Versions -->

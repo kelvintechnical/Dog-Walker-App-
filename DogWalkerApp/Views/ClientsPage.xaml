@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DogWalkerApp.Views.ClientsPage"
+             Title="Clients">
+    <VerticalStackLayout Padding="16" Spacing="12">
+        <HorizontalStackLayout Spacing="10">
+            <SearchBar Placeholder="Search clients"
+                       Text="{Binding SearchText}" />
+            <Button Text="Add"
+                    Command="{Binding CreateClientCommand}" />
+        </HorizontalStackLayout>
+
+        <CollectionView ItemsSource="{Binding FilteredClients}" SelectionMode="Single"
+                        SelectedItem="{Binding SelectedClient}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dto:ClientDto" xmlns:dto="clr-namespace:DogWalker.Core.DTOs;assembly=DogWalker.Core">
+                    <Frame Padding="12" Margin="0,6" CornerRadius="12" BorderColor="#e2e8f0">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding FullName}" FontAttributes="Bold" />
+                            <Label Text="{Binding Email}" FontSize="13" TextColor="{DynamicResource Secondary}" />
+                            <Label Text="{Binding PhoneNumber}" FontSize="13" />
+                            <Label Text="{Binding ActiveDogs, StringFormat='Dogs: {0}'}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>
