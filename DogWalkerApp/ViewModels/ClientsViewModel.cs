@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DogWalker.Core.DTOs;
@@ -33,12 +34,18 @@ public partial class ClientsViewModel : BaseViewModel
     [RelayCommand]
     private Task LoadAsync() => SafeExecuteAsync(async () =>
     {
+        var previousSelectionId = SelectedClient?.Id;
+        var clients = (await _api.GetClientsAsync())
+            .OrderBy(c => c.FullName)
+            .ToList();
+
         Clients.Clear();
-        var clients = await _api.GetClientsAsync();
         foreach (var client in clients)
         {
             Clients.Add(client);
         }
+
+        SelectedClient = Clients.FirstOrDefault(c => c.Id == previousSelectionId) ?? Clients.FirstOrDefault();
         OnPropertyChanged(nameof(FilteredClients));
     });
 
