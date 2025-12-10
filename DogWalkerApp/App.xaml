@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Resources/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter" />
+            <converters:CollectionEmptyConverter x:Key="CollectionEmptyConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
