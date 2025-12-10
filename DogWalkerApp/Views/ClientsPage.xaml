@@ -12,8 +12,18 @@
                         Command="{Binding CreateClientCommand}" />
             </HorizontalStackLayout>
 
-            <CollectionView ItemsSource="{Binding FilteredClients}" SelectionMode="Single"
-                            SelectedItem="{Binding SelectedClient}">
+            <Label Text="No clients found. Tap + to add your first client!"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontAttributes="Italic"
+                   TextColor="#6b7280"
+                   Margin="0,40,0,0"
+                   IsVisible="{Binding Clients, Converter={StaticResource CollectionEmptyConverter}}" />
+
+            <CollectionView ItemsSource="{Binding FilteredClients}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedClient}"
+                            IsVisible="{Binding Clients, Converter={StaticResource CollectionEmptyConverter}, ConverterParameter=invert}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="dto:ClientDto" xmlns:dto="clr-namespace:DogWalker.Core.DTOs;assembly=DogWalker.Core">
                         <Frame Padding="12" Margin="0,6" CornerRadius="12" BorderColor="#e2e8f0">
