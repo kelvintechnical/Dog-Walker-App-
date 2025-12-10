@@ -36,6 +36,7 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IDogService, DogService>();
 
 var connectionString = builder.Configuration.GetConnectionString("SqlServer");
 if (string.IsNullOrWhiteSpace(connectionString))

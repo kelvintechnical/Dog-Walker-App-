@@ -16,6 +16,12 @@ public interface IDogWalkerApi
     [Post("/api/clients")]
     Task<ClientDto> CreateClientAsync([Body] CreateClientRequest request);
 
+    [Get("/api/dogs")]
+    Task<IEnumerable<DogDto>> GetDogsAsync();
+
+    [Get("/api/dogs/client/{clientId}")]
+    Task<IEnumerable<DogDto>> GetDogsForClientAsync(Guid clientId);
+
     [Post("/api/clients/{clientId}/dogs")]
     Task<DogDto> AddDogAsync(Guid clientId, [Body] CreateDogRequest request);
 

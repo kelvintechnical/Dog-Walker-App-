@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DogWalker.Core.DTOs;
@@ -41,12 +42,16 @@ public partial class BookingsViewModel : BaseViewModel
     [RelayCommand]
     private Task LoadDataAsync() => SafeExecuteAsync(async () =>
     {
-        if (!Dogs.Any())
+        var previousSelectionId = SelectedDog?.Id;
+        var dogs = (await _api.GetDogsAsync()).OrderBy(d => d.Name).ToList();
+
+        Dogs.Clear();
+        foreach (var dog in dogs)
         {
-            var placeholderDog = new DogDto(Guid.NewGuid(), Guid.NewGuid(), "Goldie", "Golden Retriever", DateTime.Today.AddYears(-3), 30, "Loves fetch", false, false);
-            Dogs.Add(placeholderDog);
-            SelectedDog = placeholderDog;
+            Dogs.Add(dog);
         }
+
+        SelectedDog = Dogs.FirstOrDefault(d => d.Id == previousSelectionId) ?? Dogs.FirstOrDefault();
 
         History.Clear();
         var bookings = await _api.GetWalkerBookingsAsync(_defaultWalkerId);
