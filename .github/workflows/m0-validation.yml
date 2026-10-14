@@ -1,0 +1,62 @@
+name: M0 builds and security tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  api-security:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Start disposable SQL Server Developer
+        run: bash scripts/start-test-sql.sh "$RUNNER_TEMP/fwf-sql.connection"
+      - name: Build and run required security tests including SQL Server
+        shell: bash
+        run: |
+          set -euo pipefail
+          export FWF_TEST_SQL_CONNECTION=$(cat "$RUNNER_TEMP/fwf-sql.connection")
+          export SSL_CERT_FILE="$RUNNER_TEMP/fwf-sql.connection.tls/ca-bundle.pem"
+          echo "::add-mask::$FWF_TEST_SQL_CONNECTION"
+          dotnet build DogWalkerApi/DogWalkerApi.csproj -c Release --nologo
+          dotnet test tests/DogWalkerApi.Tests/DogWalkerApi.Tests.csproj -c Release --nologo --logger "trx;LogFileName=m0-security.trx" --results-directory TestResults
+          python3 scripts/check-test-results.py TestResults/m0-security.trx
+      - name: Preserve test outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m0-security-results
+          path: TestResults/*.trx
+          if-no-files-found: warn
+      - name: Remove only the test container and temporary connection settings
+        if: always()
+        run: |
+          docker rm -f fwf-m0-test-sql || true
+          rm -f "$RUNNER_TEMP/fwf-sql.connection"
+          rm -rf "$RUNNER_TEMP/fwf-sql.connection.tls"
+  android-build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install required Android SDK packages
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+      - name: Install verified MAUI Android workload
+        run: |
+          dotnet workload install maui-android --skip-manifest-update
+          python3 scripts/verify-workload-packages.py
+      - name: Build Android debug target (no store signing or deployment)
+        run: dotnet build DogWalkerApp/DogWalkerApp.csproj -c Debug -p:FwfAndroidOnly=true --nologo

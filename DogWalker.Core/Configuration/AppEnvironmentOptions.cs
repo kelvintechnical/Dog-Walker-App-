@@ -10,7 +10,6 @@ public class AppEnvironmentOptions
     public string ApiBaseUrl { get; set; } = "https://localhost:5001";
     public string SignalRHubUrl { get; set; } = "https://localhost:5001/hubs/walks";
     public string StripePublishableKey { get; set; } = string.Empty;
-    public string StripeSecretKey { get; set; } = string.Empty;
-    public string SendGridApiKey { get; set; } = string.Empty;
+    public Guid? DefaultWalkerId { get; set; }
     public string MapsApiKey { get; set; } = string.Empty;
 }

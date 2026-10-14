@@ -1,4 +1,5 @@
 using AutoMapper;
+using DogWalkerApi.Security;
 using DogWalker.Core.Abstractions;
 using DogWalker.Core.DTOs;
 using DogWalker.Core.Enums;
@@ -13,6 +14,7 @@ namespace DogWalkerApi.Services;
 
 public class PaymentService : IPaymentService
 {
+    private readonly AccountAccess _access;
     private readonly DogWalkerDbContext _db;
     private readonly IMapper _mapper;
     private readonly PaymentIntentService _paymentIntents;
@@ -21,9 +23,10 @@ public class PaymentService : IPaymentService
     public PaymentService(
         DogWalkerDbContext db,
         IMapper mapper,
-        IOptions<StripeOptions> options)
+        IOptions<StripeOptions> options, AccountAccess access)
     {
         _db = db;
+        _access = access;
         _mapper = mapper;
         _options = options.Value;
 
@@ -33,13 +36,16 @@ public class PaymentService : IPaymentService
 
     public async Task<PaymentDto> CreateOrUpdateIntentAsync(Guid bookingId, double amount, double tip, CancellationToken cancellationToken = default)
     {
+        await _access.RequireBookingAsync(bookingId, ownerOnly: true, ct: cancellationToken);
         var booking = await _db.Bookings.Include(b => b.Payment).FirstOrDefaultAsync(b => b.Id == bookingId, cancellationToken);
         if (booking is null)
         {
             throw new KeyNotFoundException($"Booking {bookingId} not found");
         }
 
-        var totalAmount = (decimal)(amount + tip);
+        if (!double.IsFinite(amount) || !double.IsFinite(tip) || tip < 0 || amount != booking.Price)
+            throw new ResourceAccessException(StatusCodes.Status400BadRequest);
+        var totalAmount = (decimal)(booking.Price + tip);
         var totalCents = Convert.ToInt64(totalAmount * 100);
 
         PaymentIntent intent;
@@ -81,6 +87,7 @@ public class PaymentService : IPaymentService
 
     public async Task<PaymentDto> CaptureAsync(Guid bookingId, CancellationToken cancellationToken = default)
     {
+        await _access.RequireBookingAsync(bookingId, caregiverOnly: true, ct: cancellationToken);
         var payment = await _db.Payments.FirstOrDefaultAsync(p => p.BookingId == bookingId, cancellationToken);
         if (payment is null)
         {
@@ -89,7 +96,7 @@ public class PaymentService : IPaymentService
 
         var intent = await _paymentIntents.CaptureAsync(payment.StripePaymentIntentId, cancellationToken: cancellationToken);
         payment.Status = PaymentStatus.Captured;
-        payment.CapturedAtUtc = DateTimeOffset.FromUnixTimeSeconds(intent.Created ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+        payment.CapturedAtUtc = DateTimeOffset.UtcNow;
         payment.ReceiptUrl = intent.LatestChargeId != null ? intent.LatestChargeId : payment.ReceiptUrl;
 
         await _db.SaveChangesAsync(cancellationToken);
@@ -98,6 +105,8 @@ public class PaymentService : IPaymentService
 
     public async Task<PaymentDto> RefundAsync(Guid bookingId, double amount, CancellationToken cancellationToken = default)
     {
+        await _access.RequireAdministratorAsync(cancellationToken);
+        await _access.RequireBookingAsync(bookingId, caregiverOnly: true, ct: cancellationToken);
         var payment = await _db.Payments.FirstOrDefaultAsync(p => p.BookingId == bookingId, cancellationToken);
         if (payment is null)
         {

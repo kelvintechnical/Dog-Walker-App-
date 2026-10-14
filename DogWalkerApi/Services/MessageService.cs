@@ -1,4 +1,5 @@
 using AutoMapper;
+using DogWalkerApi.Security;
 using DogWalker.Core.Abstractions;
 using DogWalker.Core.DTOs;
 using DogWalker.Core.Enums;
@@ -11,17 +12,20 @@ namespace DogWalkerApi.Services;
 
 public class MessageService : IMessageService
 {
+    private readonly AccountAccess _access;
     private readonly DogWalkerDbContext _db;
     private readonly IMapper _mapper;
 
-    public MessageService(DogWalkerDbContext db, IMapper mapper)
+    public MessageService(DogWalkerDbContext db, IMapper mapper, AccountAccess access)
     {
         _db = db;
+        _access = access;
         _mapper = mapper;
     }
 
     public async Task<IEnumerable<MessageDto>> GetThreadAsync(Guid clientId, Guid walkerId, CancellationToken cancellationToken = default)
     {
+        await _access.RequireThreadAsync(clientId, walkerId, cancellationToken);
         var thread = await _db.MessageThreads
             .Include(t => t.Messages)
             .FirstOrDefaultAsync(t => t.ClientId == clientId && t.WalkerId == walkerId, cancellationToken);
@@ -37,6 +41,17 @@ public class MessageService : IMessageService
 
     public async Task<MessageDto> SendMessageAsync(SendMessageRequest request, CancellationToken cancellationToken = default)
     {
+        await _access.RequireThreadAsync(request.ClientId, request.WalkerId, cancellationToken);
+        var actor = await _access.RequireAsync(cancellationToken);
+        var direction = actor.WalkerId == request.WalkerId ? MessageDirection.WalkerToClient : MessageDirection.ClientToWalker;
+        if (actor.IsAdministrator || request.Direction != direction)
+            throw new ResourceAccessException(StatusCodes.Status403Forbidden);
+        if (request.BookingId is Guid bookingId)
+        {
+            var booking = await _access.RequireBookingAsync(bookingId, ct: cancellationToken);
+            if (booking.ClientId != request.ClientId || booking.WalkerId != request.WalkerId)
+                throw new ResourceAccessException(StatusCodes.Status404NotFound);
+        }
         var thread = await _db.MessageThreads
             .Include(t => t.Messages)
             .FirstOrDefaultAsync(t => t.ClientId == request.ClientId && t.WalkerId == request.WalkerId, cancellationToken);
@@ -55,6 +70,7 @@ public class MessageService : IMessageService
         var message = new Message
         {
             ThreadId = thread.Id,
+            SenderId = actor.Id,
             Body = request.Message,
             Direction = request.Direction,
             IsRead = request.Direction == MessageDirection.WalkerToClient

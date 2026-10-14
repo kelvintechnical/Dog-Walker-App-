@@ -16,8 +16,9 @@ public partial class MessagesViewModel : BaseViewModel
     private readonly IDogWalkerApi _api;
     private readonly IRealTimeMessagingService _messaging;
     private readonly IAppSettingsProvider _settings;
-    private readonly Guid _clientId = Guid.Parse("11111111-2222-3333-4444-555555555555");
-    private readonly Guid _walkerId = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeffffffff");
+    public Guid ActiveBookingId { get; set; }
+    private Guid _clientId;
+    private Guid _walkerId;
 
     public ObservableCollection<MessageDto> Messages { get; } = new();
 
@@ -40,6 +41,11 @@ public partial class MessagesViewModel : BaseViewModel
     [RelayCommand]
     private Task InitializeAsync() => SafeExecuteAsync(async () =>
     {
+        if (ActiveBookingId == Guid.Empty)
+            throw new InvalidOperationException("Select an existing booking before opening its conversation.");
+        var booking = await _api.GetBookingAsync(ActiveBookingId);
+        _clientId = booking.ClientId;
+        _walkerId = booking.WalkerId;
         Messages.Clear();
         var history = await _api.GetMessagesAsync(_clientId, _walkerId);
         foreach (var message in history.OrderBy(m => m.SentAtUtc))
@@ -49,7 +55,7 @@ public partial class MessagesViewModel : BaseViewModel
 
         var appSettings = await _settings.GetAsync();
         await _messaging.ConnectAsync(appSettings.SignalRHubUrl);
-        await _messaging.JoinBookingAsync(Guid.Empty);
+        await _messaging.JoinBookingAsync(ActiveBookingId);
     });
 
     [RelayCommand(CanExecute = nameof(CanSend))]
@@ -63,8 +69,9 @@ public partial class MessagesViewModel : BaseViewModel
         var request = new SendMessageRequest(
             ClientId: _clientId,
             WalkerId: _walkerId,
-            BookingId: null,
-            Direction: MessageDirection.WalkerToClient,
+            BookingId: ActiveBookingId,
+            Direction: (await _api.GetAccountAsync()).WalkerId == _walkerId
+                ? MessageDirection.WalkerToClient : MessageDirection.ClientToWalker,
             Message: DraftMessage);
 
         var sent = await _api.SendMessageAsync(request);

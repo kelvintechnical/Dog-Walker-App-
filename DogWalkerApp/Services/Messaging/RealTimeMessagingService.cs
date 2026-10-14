@@ -1,4 +1,5 @@
 using DogWalker.Core.DTOs;
+using DogWalkerApp.Services.Authentication;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace DogWalkerApp.Services.Messaging;
@@ -10,7 +11,7 @@ public interface IRealTimeMessagingService
     event EventHandler<MessageDto>? MessageReceived;
 }
 
-public class RealTimeMessagingService : IRealTimeMessagingService
+public class RealTimeMessagingService(IAccessTokenProvider tokens) : IRealTimeMessagingService
 {
     private HubConnection? _connection;
 
@@ -23,8 +24,10 @@ public class RealTimeMessagingService : IRealTimeMessagingService
             return;
         }
 
+        if (new Uri(hubUrl).Scheme != Uri.UriSchemeHttps || string.IsNullOrWhiteSpace(await tokens.GetAsync()))
+            throw new InvalidOperationException("Sign in using a secure endpoint before connecting to messages.");
         _connection = new HubConnectionBuilder()
-            .WithUrl(hubUrl)
+            .WithUrl(hubUrl, options => options.AccessTokenProvider = tokens.GetAsync)
             .WithAutomaticReconnect()
             .Build();
 

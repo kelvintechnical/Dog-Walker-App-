@@ -1,12 +1,8 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using DogWalker.Core.Configuration;
 
 namespace DogWalkerApp.Services;
-
-public interface IAppSettingsProvider
-{
-    Task<AppEnvironmentOptions> GetAsync();
-}
 
 public class AppSettingsProvider : IAppSettingsProvider
 {
@@ -28,7 +24,7 @@ public class AppSettingsProvider : IAppSettingsProvider
         var root = JsonSerializer.Deserialize<JsonElement>(json);
         if (root.TryGetProperty("App", out var appElement))
         {
-            var options = appElement.Deserialize<AppEnvironmentOptions>();
+            var options = appElement.Deserialize<AppEnvironmentOptions>(new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } });
             if (options is not null)
             {
                 return options;

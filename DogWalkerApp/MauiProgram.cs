@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui;
+using DogWalkerApp.Services.Authentication;
 using DogWalker.Core.Configuration;
 using DogWalkerApp.Services;
 using DogWalkerApp.Services.Api;
@@ -30,7 +31,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAppSettingsProvider, AppSettingsProvider>();
         builder.Services.AddSingleton(new AppEnvironmentOptions());
 
+        builder.Services.AddSingleton<IAccessTokenProvider, AccessTokenProvider>();
+        builder.Services.AddTransient<AuthenticatedApiHandler>();
         builder.Services.AddRefitClient<IDogWalkerApi>()
+            .AddHttpMessageHandler<AuthenticatedApiHandler>()
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:5001");

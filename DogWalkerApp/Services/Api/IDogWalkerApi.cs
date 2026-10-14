@@ -7,6 +7,15 @@ namespace DogWalkerApp.Services.Api;
 
 public interface IDogWalkerApi
 {
+    [Get("/api/accounts/me")]
+    Task<AccountProfileDto> GetAccountAsync();
+
+    [Get("/api/bookings/{bookingId}")]
+    Task<BookingDto> GetBookingAsync(Guid bookingId);
+
+    [Get("/api/bookings/client/{clientId}")]
+    Task<IEnumerable<BookingDto>> GetClientBookingsAsync(Guid clientId);
+
     [Get("/api/clients")]
     Task<IEnumerable<ClientDto>> GetClientsAsync();
 

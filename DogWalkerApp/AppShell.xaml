@@ -10,7 +10,7 @@
         <Tab Title="Dashboard" Icon="appiconfg.svg">
             <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" />
         </Tab>
-        <Tab Title="Bookings" Icon="dotnet_bot.svg">
+        <Tab Route="bookings" Title="Bookings" Icon="dotnet_bot.svg">
             <ShellContent ContentTemplate="{DataTemplate views:BookingsPage}" />
         </Tab>
         <Tab Title="Clients">

@@ -1,4 +1,5 @@
 using DogWalker.Core.DTOs;
+using DogWalker.Core.Requests;
 
 namespace DogWalker.Core.Abstractions;
 

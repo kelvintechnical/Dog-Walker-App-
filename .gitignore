@@ -1,0 +1,11 @@
+# Local build/development outputs. Previously tracked files are preserved in M0.
+**/bin/
+**/obj/
+.vs/
+TestResults/
+*.user
+*.suo
+*.keystore
+*.pfx
+.env
+__pycache__/

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><IsTestProject>true</IsTestProject><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../DogWalkerApp/Services/Authentication/AccessTokenProvider.cs" Link="Mobile/AccessTokenProvider.cs" />
+    <Compile Include="../../DogWalkerApp/Services/Authentication/AuthenticatedApiHandler.cs" Link="Mobile/AuthenticatedApiHandler.cs" />
+    <Compile Include="../../DogWalkerApp/Services/IAppSettingsProvider.cs" Link="Mobile/IAppSettingsProvider.cs" />
+    <Compile Include="../../DogWalkerApp/Services/Storage/ISecureStorageService.cs" Link="Mobile/ISecureStorageService.cs" />
+    <None Include="../../DogWalkerApi/Data/Scripts/M0_AddAccounts.sql" Link="M0_AddAccounts.sql" CopyToOutputDirectory="PreserveNewest" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"><PrivateAssets>all</PrivateAssets></PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+    <ProjectReference Include="../../DogWalkerApi/DogWalkerApi.csproj" />
+  </ItemGroup>
+</Project>

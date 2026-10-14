@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogWalkerApi", "DogWalkerAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogWalker.Core", "DogWalker.Core\DogWalker.Core.csproj", "{89D28264-520F-4557-8A36-3D9F46D13353}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E2941071-E395-40B8-A893-DD3C5064A571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogWalkerApi.Tests", "tests\DogWalkerApi.Tests\DogWalkerApi.Tests.csproj", "{39BC1241-1B2A-41E8-BC34-F0522C309A4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,12 @@ Global
 		{89D28264-520F-4557-8A36-3D9F46D13353}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89D28264-520F-4557-8A36-3D9F46D13353}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89D28264-520F-4557-8A36-3D9F46D13353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39BC1241-1B2A-41E8-BC34-F0522C309A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39BC1241-1B2A-41E8-BC34-F0522C309A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39BC1241-1B2A-41E8-BC34-F0522C309A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39BC1241-1B2A-41E8-BC34-F0522C309A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{39BC1241-1B2A-41E8-BC34-F0522C309A4C} = {E2941071-E395-40B8-A893-DD3C5064A571}
 	EndGlobalSection
 EndGlobal

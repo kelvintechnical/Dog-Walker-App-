@@ -12,7 +12,6 @@ namespace DogWalkerApp.ViewModels;
 public partial class DashboardViewModel : BaseViewModel
 {
     private readonly IDogWalkerApi _api;
-    private readonly Guid _defaultWalkerId = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeffffffff");
 
     public ObservableCollection<ServiceOption> ServiceOptions { get; } = new();
     public ObservableCollection<BookingDto> UpcomingBookings { get; } = new();
@@ -31,7 +30,10 @@ public partial class DashboardViewModel : BaseViewModel
     private Task InitializeAsync() => SafeExecuteAsync(async () =>
     {
         UpcomingBookings.Clear();
-        var bookings = await _api.GetWalkerBookingsAsync(_defaultWalkerId);
+        var account = await _api.GetAccountAsync();
+        var bookings = account.WalkerId is Guid walkerId
+            ? await _api.GetWalkerBookingsAsync(walkerId)
+            : account.ClientId is Guid clientId ? await _api.GetClientBookingsAsync(clientId) : [];
         foreach (var booking in bookings)
         {
             UpcomingBookings.Add(booking);
@@ -45,19 +47,8 @@ public partial class DashboardViewModel : BaseViewModel
     [RelayCommand]
     private Task QuickBookAsync(ServiceOption option) => SafeExecuteAsync(async () =>
     {
-        var now = DateTimeOffset.UtcNow.AddMinutes(30);
-        var request = new CreateBookingRequest(
-            clientId: Guid.NewGuid(),
-            walkerId: _defaultWalkerId,
-            dogId: Guid.NewGuid(),
-            serviceType: option.ServiceType,
-            startTimeUtc: now,
-            endTimeUtc: now.AddMinutes(option.ServiceType == ServiceType.ThirtyMinuteWalk ? 30 : 60),
-            notes: $"Auto booking for {option.Title}");
-
-        var booking = await _api.CreateBookingAsync(request);
-        UpcomingBookings.Insert(0, booking);
-        StatusMessage = $"Booked {option.Title} at {booking.StartTimeUtc.LocalDateTime:t}";
+        // Quick-book opens the real dog-selection form; never create arbitrary client/dog IDs.
+        await Shell.Current.GoToAsync("//bookings");
     });
 
     private void PopulateServiceOptions()

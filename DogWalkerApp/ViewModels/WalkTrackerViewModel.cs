@@ -48,7 +48,9 @@ public partial class WalkTrackerViewModel : BaseViewModel
     [RelayCommand]
     private Task BeginWalkAsync() => SafeExecuteAsync(async () =>
     {
-        ActiveBookingId = Guid.NewGuid();
+        if (ActiveBookingId == Guid.Empty)
+            throw new InvalidOperationException("Select an existing booking before starting a walk.");
+        await _api.GetBookingAsync(ActiveBookingId);
         IsTracking = true;
         await _gpsTracker.StartAsync(ActiveBookingId);
     });
@@ -60,7 +62,7 @@ public partial class WalkTrackerViewModel : BaseViewModel
         IsTracking = false;
         if (ActiveBookingId != Guid.Empty)
         {
-            await _api.UpdateBookingStatusAsync(ActiveBookingId, new UpdateBookingStatusRequest(Core.Enums.BookingStatus.Completed));
+            await _api.UpdateBookingStatusAsync(ActiveBookingId, new UpdateBookingStatusRequest(DogWalker.Core.Enums.BookingStatus.Completed));
         }
     });
 

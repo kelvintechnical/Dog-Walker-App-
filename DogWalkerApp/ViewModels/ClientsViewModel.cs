@@ -52,16 +52,24 @@ public partial class ClientsViewModel : BaseViewModel
     [RelayCommand]
     private Task CreateClientAsync() => SafeExecuteAsync(async () =>
     {
-        var request = new CreateClientRequest(
-            FullName: "New Client",
-            Email: $"client+{Guid.NewGuid():N}@friendswithfur.com",
-            PhoneNumber: "(555) 555-5555",
-            Line1: "123 Bark Street",
-            Line2: null,
-            City: "Dogsville",
-            State: "CA",
-            PostalCode: "90210",
-            Country: "US");
+        var page = Application.Current?.MainPage ?? throw new InvalidOperationException("Application page unavailable.");
+        var name = await page.DisplayPromptAsync("Your profile", "Full name");
+        if (string.IsNullOrWhiteSpace(name)) return;
+        var email = await page.DisplayPromptAsync("Your profile", "Email", keyboard: Keyboard.Email);
+        if (string.IsNullOrWhiteSpace(email)) return;
+        var phone = await page.DisplayPromptAsync("Your profile", "Phone", keyboard: Keyboard.Telephone);
+        if (string.IsNullOrWhiteSpace(phone)) return;
+        var address = await page.DisplayPromptAsync("Your profile", "Street address");
+        if (string.IsNullOrWhiteSpace(address)) return;
+        var city = await page.DisplayPromptAsync("Your profile", "City");
+        if (string.IsNullOrWhiteSpace(city)) return;
+        var state = await page.DisplayPromptAsync("Your profile", "State/region");
+        if (string.IsNullOrWhiteSpace(state)) return;
+        var postal = await page.DisplayPromptAsync("Your profile", "Postal code");
+        if (string.IsNullOrWhiteSpace(postal)) return;
+        var country = await page.DisplayPromptAsync("Your profile", "Country code (e.g. US)");
+        if (string.IsNullOrWhiteSpace(country)) return;
+        var request = new CreateClientRequest(name, email, phone, address, null, city, state, postal, country);
 
         var client = await _api.CreateClientAsync(request);
         Clients.Insert(0, client);
