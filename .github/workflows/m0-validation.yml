@@ -47,16 +47,19 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-python@v6
         with:
-          distribution: temurin
-          java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Install required Android SDK packages
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          python-version: '3.12'
+      - name: Prepare checksum-verified Android and JDK tools
+        env:
+          FWF_TOOL_ROOT: ${{ runner.temp }}/fwf-android-tools
+        run: python scripts/setup-android-tools.py
       - name: Install verified MAUI Android workload
         run: |
           dotnet workload install maui-android --skip-manifest-update
           python3 scripts/verify-workload-packages.py
       - name: Build Android debug target (no store signing or deployment)
-        run: dotnet build DogWalkerApp/DogWalkerApp.csproj -c Debug -p:FwfAndroidOnly=true --nologo
+        run: >-
+          dotnet build DogWalkerApp/DogWalkerApp.csproj -c Debug -f net8.0-android -p:FwfAndroidOnly=true
+          -p:AndroidSdkDirectory="$RUNNER_TEMP/fwf-android-tools/fwf-android-sdk"
+          -p:JavaSdkDirectory="$RUNNER_TEMP/fwf-android-tools/fwf-jdk/jdk-17.0.20.1+1" --nologo

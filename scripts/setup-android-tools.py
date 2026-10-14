@@ -2,6 +2,7 @@
 No application files, system trust settings or production signing keys are changed.
 """
 import hashlib
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -11,7 +12,8 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-workspace = Path("/workspace")
+workspace = Path(os.environ.get("FWF_TOOL_ROOT", "/workspace"))
+workspace.mkdir(parents=True, exist_ok=True)
 jdk_version = "17.0.20.1+1"
 jdk_name = "OpenJDK17U-jdk_x64_linux_hotspot_17.0.20.1_1.tar.gz"
 jdk_url = "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.20.1%2B1/" + jdk_name

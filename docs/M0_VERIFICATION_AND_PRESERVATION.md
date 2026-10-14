@@ -34,3 +34,9 @@ No authentication service, account, paid tier, subscription resource or deployme
 8. Observe the GitHub Actions run after push if access permits; local success is distinct from a hosted-CI result. GitHub API access is currently denied even though scoped Git read/write access may work; no credential value should be requested in chat.
 
 M1 remains stopped and requires a separate explicit authorization. No main merge or production deployment is included in preservation.
+
+## Preservation and first hosted CI run
+
+Initial preservation commit `296f608db2c3a290a2b990830e1f695b425dd6eb` was pushed on 2026-10-14 and verified to match the remote M0 branch; main remained `8d9b7ad83bc6e87caf4c2231a9e1e071f2a26424`. [Hosted run 38576348434](https://github.com/kelvintechnical/Dog-Walker-App-/actions/runs/38576348434) passed every API/security/SQL step. The Android job failed at `android-actions/setup-android@v3` before SDK packages, workload installation or compilation. Public job metadata confirms the failed step; detailed log access was unavailable. No assertion or build target was bypassed.
+
+The follow-up CI correction removes that SDK bootstrap and uses the same checksum-verified JDK/Android helper that passed locally, with Python 3.12 and runner-temporary tool directories. FWF_TOOL_ROOT makes the helper usable on hosted runners without writing to a system workspace. The Android debug build and workload-signature checks remain required. This is a tooling correction within M0, not a platform/runtime architectural upgrade. Follow-up hosted results and final branch SHA are reported separately after push.
